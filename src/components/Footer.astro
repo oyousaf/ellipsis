@@ -55,7 +55,42 @@ const year = new Date().getFullYear();
   </div>
 
   <div class="container-x flex flex-col gap-3 border-t border-line py-6 text-xs text-muted md:flex-row md:items-center md:justify-between">
-    <p>Unofficial concept redesign for a personal portfolio. Not affiliated with or endorsed by {site.name} Ltd. Content and photography © {site.name} Ltd.</p>
-    <p class="label">End of entry · {year}</p>
+    <p class="max-w-2xl">Unofficial concept redesign for a personal portfolio. Not affiliated with or endorsed by {site.name} Ltd. Content and photography © {site.name} Ltd.</p>
+    <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+      <p class="flex items-center gap-1.5 text-sm text-fg">
+        <span>Built with</span>
+        <span class="signature-heart inline-block" aria-hidden="true">💚</span>
+        <span
+          >by <a href="https://legxcysol.dev" target="_blank" rel="noopener noreferrer" class="font-semibold underline decoration-1 underline-offset-4 hover:text-mark"
+            >Legxcy Solutions<span class="sr-only"> (opens in a new tab)</span></a
+          ></span
+        >
+      </p>
+      <p class="label">End of entry · {year}</p>
+    </div>
   </div>
 </footer>
+
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    .signature-heart {
+      animation: heartbeat 1.6s ease-in-out infinite;
+    }
+  }
+
+  @keyframes heartbeat {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    15% {
+      transform: scale(1.25);
+    }
+    30% {
+      transform: scale(1);
+    }
+    45% {
+      transform: scale(1.15);
+    }
+  }
+</style>
