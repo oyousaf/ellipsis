@@ -1,0 +1,153 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHero from "../../components/PageHero.astro";
+import SectionHead from "../../components/SectionHead.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import Faq from "../../components/Faq.astro";
+import FieldPhoto from "../../components/FieldPhoto.astro";
+import Note from "../../components/Note.astro";
+import Scribble from "../../components/Scribble.astro";
+import LitterMap from "../../components/islands/LitterMap";
+import { capabilities, environments, howItWorks, mission, photos, surveys } from "../../data/site";
+
+const faqs = [
+  {
+    q: "Do we need our own survey team?",
+    a: "No. Our in-house scientific survey team is trained and insured for air and ground surveys anywhere in the world. If you have your own staff, they can upload imagery through the Ellipsis app or portal instead.",
+  },
+  {
+    q: "What imagery works?",
+    a: "Anything from smartphones and the Ellipsis app to drones and cameras mounted on vehicles or bicycles.",
+  },
+  {
+    q: "How do we see the results?",
+    a: "In the Ellipsis Earth portal: heatmaps, pinpoints, geofenced site comparisons, bin performance and source tracking, plus written recommendations.",
+  },
+  {
+    q: "Is grading compatible with our existing standards?",
+    a: "Yes. Ellipsis Grade produces A–D cleanliness grades aligned with DEFRA standards, so results slot into existing reporting.",
+  },
+];
+---
+
+<Layout
+  title="Earth: environmental monitoring"
+  description="Ellipsis Earth's Detect, Grade and Predict tools turn imagery from phones, drones and vehicles into litter maps, cleanliness grades and hotspot forecasts."
+>
+  <PageHero marker="§ 01 · Earth · Monitor" title="Stop guessing where litter comes from." intro={mission.goal}>
+    <div class="mt-10 flex flex-wrap gap-4">
+      <a href="/contact" class="btn btn-ink">Book a demo <span class="arrow" aria-hidden="true">→</span></a>
+      <a href="#platform" class="btn btn-line">Try the platform</a>
+    </div>
+  </PageHero>
+
+  {/* How it works as a hand-annotated process */}
+  <section id="how-it-works" class="container-x py-20 sm:py-28">
+    <SectionHead marker="Method" title="From photo to policy in four steps." />
+    <ol class="reveal-stagger relative mt-16 grid gap-10 md:grid-cols-4 md:gap-6">
+      {
+        howItWorks.map((s, i) => (
+          <li class="relative">
+            <span class="grid size-14 place-items-center rounded-full border-[1.5px] border-fg font-display text-xl font-bold">{s.step}</span>
+            {i < howItWorks.length - 1 && <Scribble shape="arrow-right" class="absolute top-2 left-20 hidden h-10 w-[calc(100%-6rem)] md:block" />}
+            <h3 class="mt-6 text-3xl">{s.title}</h3>
+            <p class="mt-3 text-muted">{s.body}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  {/* Tools, each with a real photo where we have one */}
+  <section class="on-page paper border-y-[1.5px] border-fg py-24 sm:py-32">
+    <div class="container-x space-y-28">
+      {
+        capabilities.map((c, i) => (
+          <article id={c.id} class="grid items-center gap-12 lg:grid-cols-12">
+            <div class:list={["reveal lg:col-span-6", i % 2 === 1 && "lg:order-2"]}>
+              <p class="label text-mark">
+                Tool 0{i + 1} · {c.kicker}
+              </p>
+              <h2 class="display-lg mt-4">{c.name}</h2>
+              <p class="mt-6 text-xl">{c.summary}</p>
+              <ul class="mt-8 space-y-3">
+                {c.points.map((pt) => (
+                  <li class="flex items-start gap-3">
+                    <Scribble shape="tick" class="mt-1 h-4 w-5 shrink-0" />
+                    {pt}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div class:list={["relative lg:col-span-6", i % 2 === 1 && "lg:order-1"]}>
+              {i === 0 && <FieldPhoto src={photos.detectPavement.src} alt={photos.detectPavement.alt} fig="03" caption="Detect output: each item boxed, typed and branded." rotate={-2} />}
+              {i === 1 && (
+                <div class="card reveal grid grid-cols-4 gap-px overflow-hidden bg-fg p-0" style="rotate:1.5deg">
+                  {["A", "B", "C", "D"].map((g, gi) => (
+                    <div class="bg-page p-5 text-center">
+                      <p class="font-display text-6xl font-bold" style={`color:${["#5b7f3a", "#a8860a", "#c46d12", "#9e2b12"][gi]}`}>
+                        {g}
+                      </p>
+                      <p class="label mt-2 text-muted">{["clean", "light", "littered", "heavy"][gi]}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {i === 2 && <FieldPhoto src={photos.heatmap.src} alt={photos.heatmap.alt} fig="04" caption="Hotspot heatmap, Bournemouth town centre." rotate={2} />}
+              {i === 1 && (
+                <Note class="mt-8 ml-6" rotate={-3}>
+                  same photo, same grade, every time
+                </Note>
+              )}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  {/* Demo */}
+  <section id="platform" class="container-x py-24 sm:py-32">
+    <SectionHead marker="Platform" title="See it think." intro="A sample survey running through each tool. Switch tabs, hover the map, or play the day in Predict." />
+    <div class="reveal mt-14"><LitterMap client:visible /></div>
+  </section>
+
+  {/* Surveys */}
+  <section id="surveys" class="flip paper bg-bg py-24 text-fg sm:py-32">
+    <div class="container-x">
+      <SectionHead
+        marker="Surveys"
+        title="Software first, with service when you need it."
+        intro="Our core product maps and tracks litter from images. Our survey team can also gather the imagery for you, anywhere in the world."
+      />
+      <div class="reveal-stagger mt-14 grid gap-7 md:grid-cols-3">
+        {
+          surveys.map((s, i) => (
+            <article class="card flex flex-col p-8" style={`rotate:${[-1, 0.8, -0.4][i]}deg; color-scheme: light`}>
+              <span class="tag self-start text-mark">{s.duration}</span>
+              <h3 class="mt-10 text-4xl">{s.name}</h3>
+              <p class="mt-4 text-muted">{s.body}</p>
+            </article>
+          ))
+        }
+      </div>
+      <ul class="reveal mt-20 grid gap-px border-y border-line sm:grid-cols-5">
+        {
+          environments.map((e) => (
+            <li class="py-6 sm:px-5 sm:first:pl-0">
+              <p class="font-display text-xl leading-tight font-bold">{e.name}</p>
+              <p class="mt-2 text-sm text-muted">{e.detail}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="container-x grid gap-12 py-24 sm:py-32 lg:grid-cols-[1fr_1.6fr]">
+    <SectionHead marker="FAQs" title="Good questions." />
+    <div class="reveal"><Faq items={faqs} group="earth-faq" /></div>
+  </section>
+
+  <CtaBand />
+</Layout>

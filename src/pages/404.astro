@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Scribble from "../components/Scribble.astro";
+---
+
+<Layout title="Page not found">
+  <section class="graph relative grid min-h-svh place-items-center overflow-hidden px-4 text-center">
+    <div aria-hidden="true" class="absolute inset-0 bg-linear-to-b from-transparent to-bg"></div>
+    <div class="relative">
+      <p class="label">Error 404 · Survey result</p>
+      <h1 class="display-xl mt-6">
+        Nothing <span class="relative inline-block">here<Scribble shape="circle" now class="absolute top-[-18%] left-[-10%] h-[136%] w-[120%]" /></span>.
+      </h1>
+      <p class="mx-auto mt-8 max-w-md text-lg text-muted">Not even a cigarette butt. This page may have moved when the site was rebuilt.</p>
+      <a href="/" class="btn btn-ink mt-10">Back to home <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</Layout>

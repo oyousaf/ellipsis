@@ -1,0 +1,44 @@
+---
+// Circular rubber stamp with text on a path; used for awards and verification marks.
+interface Props {
+  ring: string;
+  center: string;
+  sub?: string;
+  rotate?: number;
+  class?: string;
+}
+
+const { ring, center, sub, rotate = -8, class: className = "" } = Astro.props;
+const id = `stamp-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<svg
+  viewBox="0 0 200 200"
+  role="img"
+  aria-label={`${center} ${sub ?? ""}: ${ring}`}
+  class:list={["stamp text-mark", className]}
+  style={`rotate:${rotate}deg`}
+>
+  <defs>
+    <path id={id} d="M100 100 m -74 0 a 74 74 0 1 1 148 0 a 74 74 0 1 1 -148 0"></path>
+  </defs>
+  <circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-width="3"></circle>
+  <circle cx="100" cy="100" r="58" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
+  <text fill="currentColor" font-family="var(--font-mono)" font-size="13.5" font-weight="600" letter-spacing="2.4">
+    <textPath href={`#${id}`}>{ring.toUpperCase()} ✦ </textPath>
+  </text>
+  <text x="100" y={sub ? 102 : 112} text-anchor="middle" fill="currentColor" font-family="var(--font-display)" font-weight="800" font-size="34">{center}</text>
+  {sub && <text x="100" y="126" text-anchor="middle" fill="currentColor" font-family="var(--font-mono)" font-size="11" letter-spacing="1.5">{sub.toUpperCase()}</text>}
+</svg>
+
+<style>
+  .stamp {
+    mix-blend-mode: multiply;
+    opacity: 0.88;
+  }
+
+  :global(.flip) .stamp,
+  :global([data-theme="dark"]) .stamp {
+    mix-blend-mode: normal;
+  }
+</style>

@@ -1,0 +1,22 @@
+---
+interface Props {
+  // Section marker, e.g. "§ 01 · Earth".
+  marker: string;
+  // Trusted HTML so headings can carry an <em> accent.
+  title: string;
+  intro?: string;
+  class?: string;
+}
+
+const { marker, title, intro, class: className = "" } = Astro.props;
+---
+
+<div class:list={["reveal max-w-3xl", className]}>
+  <p class="label flex items-center gap-3">
+    <span>{marker}</span>
+    <span aria-hidden="true" class="h-px w-12 bg-current opacity-50"></span>
+  </p>
+  <h2 class="display-md mt-5" set:html={title} />
+  {intro && <p class="mt-6 max-w-2xl text-lg text-muted sm:text-xl">{intro}</p>}
+  <slot />
+</div>

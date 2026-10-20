@@ -1,0 +1,62 @@
+---
+// Hand-drawn marker strokes. Each path uses pathLength="1" so the shared .draw animation can draw any shape.
+type Shape = "circle" | "underline" | "arrow-down" | "arrow-right" | "arrow-curl" | "star" | "tick";
+
+interface Props {
+  shape: Shape;
+  class?: string;
+  // Draw on page load (for above-the-fold strokes) instead of when scrolled into view.
+  now?: boolean;
+  delay?: string;
+}
+
+const { shape, class: className = "", now = false, delay } = Astro.props;
+
+const shapes: Record<Shape, { viewBox: string; paths: string[] }> = {
+  circle: {
+    viewBox: "0 0 300 120",
+    paths: ["M150 8 C 60 6, 8 30, 10 62 C 12 98, 90 114, 170 110 C 250 106, 294 82, 290 52 C 286 20, 210 4, 120 12 C 90 15, 70 22, 58 30"],
+  },
+  underline: {
+    viewBox: "0 0 300 24",
+    paths: ["M4 16 C 60 6, 120 20, 180 10 S 270 8, 296 14"],
+  },
+  "arrow-down": {
+    viewBox: "0 0 80 120",
+    paths: ["M20 6 C 50 30, 58 70, 40 110", "M22 92 L 40 112 L 58 94"],
+  },
+  "arrow-right": {
+    viewBox: "0 0 140 60",
+    paths: ["M6 40 C 40 10, 90 12, 128 30", "M108 14 L 130 30 L 106 44"],
+  },
+  "arrow-curl": {
+    viewBox: "0 0 140 120",
+    paths: ["M10 10 C 70 0, 110 30, 80 60 C 60 80, 40 60, 60 48 C 90 30, 130 70, 120 110", "M104 98 L 120 112 L 132 92"],
+  },
+  star: {
+    viewBox: "0 0 60 60",
+    paths: ["M30 4 L 37 22 L 56 23 L 41 35 L 47 54 L 30 43 L 13 54 L 19 35 L 4 23 L 23 22 Z"],
+  },
+  tick: {
+    viewBox: "0 0 60 50",
+    paths: ["M6 26 L 22 42 L 54 6"],
+  },
+};
+
+const { viewBox, paths } = shapes[shape];
+---
+
+<svg
+  aria-hidden="true"
+  viewBox={viewBox}
+  preserveAspectRatio="none"
+  fill="none"
+  class:list={["draw pointer-events-none overflow-visible text-mark", now && "draw-now", className]}
+  style={delay ? `--draw-delay:${delay}` : undefined}
+>
+  {
+    paths.map((d) => (
+      <path d={d} pathLength="1" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
+    ))
+  }
+</svg>

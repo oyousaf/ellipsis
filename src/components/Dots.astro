@@ -1,0 +1,16 @@
+---
+// The brand's "…" used as a section divider.
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div aria-hidden="true" class:list={["flex justify-center py-6", className]}>
+  <span class="dots inline-flex gap-3">
+    <span class="size-2.5 rounded-full bg-fg"></span>
+    <span class="size-2.5 rounded-full bg-fg"></span>
+    <span class="size-2.5 rounded-full bg-mark"></span>
+  </span>
+</div>

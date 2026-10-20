@@ -1,0 +1,24 @@
+---
+interface Props {
+  // Section marker, e.g. "§ 01 · Earth".
+  marker: string;
+  // Trusted HTML so headings can carry an accent span.
+  title: string;
+  intro?: string;
+}
+
+const { marker, title, intro } = Astro.props;
+---
+
+<section class="graph margin-line paper relative overflow-hidden pt-36 pb-16 sm:pt-44 sm:pb-24">
+  <div aria-hidden="true" class="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-bg"></div>
+  <div class="container-x relative">
+    <p class="label flex items-center gap-3">
+      <span>{marker}</span>
+      <span aria-hidden="true" class="h-px w-12 bg-current opacity-50"></span>
+    </p>
+    <h1 class="display-lg mt-6 max-w-5xl" set:html={title} />
+    {intro && <p class="mt-8 max-w-2xl text-lg text-muted sm:text-xl">{intro}</p>}
+    <slot />
+  </div>
+</section>

@@ -1,0 +1,297 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import SectionHead from "../components/SectionHead.astro";
+import CtaBand from "../components/CtaBand.astro";
+import PostCard from "../components/PostCard.astro";
+import FieldPhoto from "../components/FieldPhoto.astro";
+import Scribble from "../components/Scribble.astro";
+import Note from "../components/Note.astro";
+import Stamp from "../components/Stamp.astro";
+import Dots from "../components/Dots.astro";
+import LitterMap from "../components/islands/LitterMap";
+import { awards, capabilities, caseStudies, educate, expeditions, mission, partners, photos, pillars, site, sized, stats } from "../data/site";
+
+const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 3);
+const results = caseStudies.slice(0, 4);
+const tilts = [-1.5, 1, -0.5];
+---
+
+<Layout title="Home" fullTitle={`${site.name} · ${site.tagline}`}>
+  {/* Hero: the mission, written into the notebook. */}
+  <section class="graph margin-line relative overflow-hidden pt-32 pb-20 sm:pt-40 lg:pb-28">
+    <div aria-hidden="true" class="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-bg"></div>
+    <div class="container-x relative grid items-center gap-14 lg:grid-cols-12">
+      <div class="@container lg:col-span-7">
+        <p class="rise label flex flex-wrap items-center gap-3" style="--i:0">
+          <span>Field notes</span>
+          <span aria-hidden="true" class="h-px w-8 bg-current opacity-50"></span>
+          <span>Est. {site.founded}</span>
+          <span aria-hidden="true" class="h-px w-8 bg-current opacity-50"></span>
+          <span>{site.location}</span>
+        </p>
+
+        {/* Sized to its column (container query units) so "Environmental" never runs under the photo. */}
+        <h1 class="mt-8 text-[clamp(3rem,17.5cqi,9.5rem)]">
+          <span class="rise inline-block" style="--i:1">Environmental</span>{" "}
+          <span class="rise inline-block" style="--i:2">data</span>{" "}
+          <span class="rise inline-block" style="--i:3">that</span>{" "}
+          <span class="rise inline-block" style="--i:4">drives</span>{" "}
+          <span class="rise relative inline-block" style="--i:5">
+            change.
+            <Scribble shape="circle" now delay="0.9s" class="absolute top-[-14%] left-[-6%] h-[128%] w-[112%]" />
+          </span>
+        </h1>
+
+        <p class="rise mt-9 max-w-xl text-lg sm:text-xl" style="--i:7">
+          We map pollution with machine learning, from high streets to the Galápagos, and put that data to work in council chambers,
+          classrooms and the stories that change behaviour.
+        </p>
+
+        <div class="rise mt-10 flex flex-wrap gap-4" style="--i:8">
+          <a href="/earth" class="btn btn-ink">See how it works <span class="arrow" aria-hidden="true">→</span></a>
+          <a href="/earth/case-studies" class="btn btn-line">Read the results</a>
+        </div>
+      </div>
+
+      <div class="relative lg:col-span-5">
+        <FieldPhoto
+          src={photos.detectRoadside.src}
+          alt={photos.detectRoadside.alt}
+          fig="01"
+          caption="Ellipsis Detect, roadside survey. Every item typed and branded."
+          rotate={2.5}
+          eager
+          width={880}
+          height={660}
+        />
+        {/* In normal flow (not absolute) so it can't be clipped when the photo goes full width on tablets. */}
+        <div class="mt-16 ml-auto w-fit pr-2 sm:mr-8">
+          <Note rotate={-4} arrow="curl" arrowClass="-top-14 -left-12 h-12 w-14 -scale-y-100">even the brand gets logged!</Note>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Three pillars, given equal weight. */}
+  <section class="container-x pt-24 pb-24 sm:pt-32">
+    <SectionHead
+      marker="Contents"
+      title="One dataset. Three ways it changes things."
+      intro="Every survey feeds the same platform, and that data does three jobs."
+    />
+    <ol class="reveal-stagger mt-14 grid gap-7 md:grid-cols-3">
+      {
+        pillars.map((p, i) => (
+          <li>
+            <a href={p.href} class="card group flex h-full flex-col p-7" style={`rotate:${tilts[i]}deg`}>
+              <div class="flex items-start justify-between">
+                <span class="label">
+                  {p.number} · {p.verb}
+                </span>
+                <span class="text-2xl transition-transform duration-500 group-hover:translate-x-1" aria-hidden="true">
+                  →
+                </span>
+              </div>
+              <h3 class="mt-12 text-6xl">{p.name}</h3>
+              <p class="mt-4 text-muted">{p.summary}</p>
+              <ul class="mt-auto flex flex-wrap gap-1.5 pt-8">
+                {p.audience.map((a) => (
+                  <li class="tag text-muted">{a}</li>
+                ))}
+              </ul>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  {/* The problem, as a pull quote. */}
+  <section class="flip paper bg-bg py-24 text-fg sm:py-32">
+    <div class="container-x grid gap-12 lg:grid-cols-12">
+      <p class="label lg:col-span-3">Why it matters</p>
+      <div class="lg:col-span-9">
+        <blockquote class="reveal font-display text-[clamp(2.25rem,5vw,4.5rem)] leading-[1.02] font-bold tracking-tight">
+          “{mission.problem.replace("wasted.", "")}<span class="relative inline-block">wasted.”<Scribble shape="underline" class="absolute -bottom-3 left-0 h-5 w-[92%]" /></span>
+        </blockquote>
+        <p class="reveal mt-10 max-w-2xl text-lg text-muted">{mission.problemDetail}</p>
+        <dl class="reveal-stagger mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-lg border-[1.5px] border-fg bg-fg sm:grid-cols-4">
+          {
+            stats.map((s, i) => (
+              <div class="bg-bg p-5">
+                <dt class="sr-only">{s.label}</dt>
+                <dd class="label text-muted" aria-hidden="true">
+                  Rec. 0{i + 1}
+                </dd>
+                <dd class="mt-6 font-display text-5xl font-bold tracking-tight tabular-nums">
+                  <span data-count={s.value}>{s.value.toLocaleString("en-GB")}</span>
+                  <span class="text-mark">{s.suffix}</span>
+                </dd>
+                <dd aria-hidden="true" class="mt-1 text-sm text-muted">
+                  {s.label}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  {/* § 01 Earth */}
+  <section id="earth" class="py-24 sm:py-32">
+    <div class="container-x grid gap-12 lg:grid-cols-12">
+      <SectionHead
+        class="lg:col-span-5"
+        marker="§ 01 · Earth"
+        title="Detect. Grade. Predict."
+        intro="Three tools that turn photos from phones, drones and vehicles into decisions you can defend."
+      >
+        <a href="/earth" class="btn btn-ink mt-9">Explore Earth <span class="arrow" aria-hidden="true">→</span></a>
+      </SectionHead>
+      <ol class="reveal-stagger border-t-[1.5px] border-fg lg:col-span-7">
+        {
+          capabilities.map((c, i) => (
+            <li class="grid gap-3 border-b border-line py-7 sm:grid-cols-[4rem_10rem_1fr]">
+              <span class="label pt-2 text-mark">0{i + 1}</span>
+              <h3 class="text-4xl">{c.name}</h3>
+              <div>
+                <p class="font-semibold">{c.kicker}</p>
+                <p class="mt-1 text-muted">{c.summary}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <div id="platform" class="container-x mt-24">
+      <div class="mb-8 flex flex-wrap items-end justify-between gap-6">
+        <p class="hand text-3xl" style="rotate:-2deg">try it: switch tools, hover the map ↓</p>
+        <p class="label text-muted">Interactive · sample survey</p>
+      </div>
+      <div class="reveal"><LitterMap client:visible /></div>
+    </div>
+  </section>
+
+  <Dots />
+
+  {/* § 02 Educate */}
+  <section id="educate" class="py-24 sm:py-32">
+    <div class="container-x grid items-center gap-16 lg:grid-cols-12">
+      <div class="relative order-2 lg:order-1 lg:col-span-5">
+        <FieldPhoto src={photos.students.src} alt={photos.students.alt} fig="02" caption="Students surveying with the Ellipsis Earth app." rotate={-2.5} width={820} height={620} />
+        <Note class="absolute -top-12 right-0" rotate={4}>real data, real science</Note>
+      </div>
+      <div class="order-1 lg:order-2 lg:col-span-7">
+        <SectionHead marker="§ 02 · Educate" title={`<span class="hand text-[0.75em]">“</span>${educate.course}<span class="hand text-[0.75em]">”</span>`} intro={educate.intro} />
+        <p class="reveal mt-5 max-w-2xl text-muted">{educate.about[1]}</p>
+        <dl class="reveal-stagger mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {
+            educate.numbers.map((n) => (
+              <div class="border-t-[1.5px] border-fg pt-3">
+                <dt class="sr-only">{n.label}</dt>
+                <dd class="font-display text-5xl font-bold">{n.value}</dd>
+                <dd aria-hidden="true" class="text-sm text-muted">
+                  {n.label}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+        <a href="/educate" class="btn btn-ink reveal mt-10">Bring it to your school <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  {/* Results ledger */}
+  <section class="on-page paper border-y-[1.5px] border-fg py-24 sm:py-32">
+    <div class="container-x">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <SectionHead marker="Results log" title="What changed when people used the data." />
+        <a href="/earth/case-studies" class="btn btn-line reveal">All case studies <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <div class="reveal mt-14 overflow-x-auto">
+        <table class="w-full min-w-160 border-collapse text-left">
+          <thead>
+            <tr class="label border-b-[1.5px] border-fg text-muted">
+              <th scope="col" class="py-3 pr-6 font-medium">Entry</th>
+              <th scope="col" class="py-3 pr-6 font-medium">Location</th>
+              <th scope="col" class="py-3 pr-6 font-medium">Result</th>
+              <th scope="col" class="py-3 font-medium">Outcome</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              results.map((c, i) => (
+                <tr class="group border-b border-line align-top transition-colors hover:bg-fg/4">
+                  <td class="label py-6 pr-6 text-mark">0{i + 1}</td>
+                  <td class="py-6 pr-6">
+                    <a href={`/earth/case-studies#${c.id}`} class="font-display text-2xl font-bold group-hover:underline">
+                      {c.place}
+                    </a>
+                    <p class="label mt-1 text-muted">{c.country}</p>
+                  </td>
+                  <td class="py-6 pr-6 font-display text-5xl font-bold tracking-tight whitespace-nowrap">{c.metric}</td>
+                  <td class="py-6 text-muted">{c.metricLabel}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="label reveal mt-10 leading-loose text-muted">Worked with: {partners.join(" · ")}</p>
+    </div>
+  </section>
+
+  {/* § 03 Stories */}
+  <section id="stories" class="py-24 sm:py-32">
+    <div class="container-x">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <SectionHead marker="§ 03 · Stories" title="Numbers don't change minds. Stories do." intro="Journalism, campaigns and expeditions from the Ellipsis team and friends." />
+        <a href="/stories" class="btn btn-line reveal">All stories <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <div class="reveal-stagger mt-14 grid gap-8 md:grid-cols-3">
+        {posts.map((post, i) => <PostCard post={post} tilt={tilts[i]} />)}
+      </div>
+
+      {/* Expedition strip */}
+      <div class="mt-24 grid items-center gap-12 lg:grid-cols-12">
+        <div class="reveal lg:col-span-4">
+          <p class="label text-mark">Expeditions</p>
+          <h3 class="mt-4 text-4xl">{expeditions.title}</h3>
+          <p class="mt-4 text-muted">{expeditions.body}</p>
+          <ul class="mt-6 flex flex-wrap gap-1.5">
+            {expeditions.places.map((p) => <li class="tag">{p}</li>)}
+          </ul>
+        </div>
+        <div class="grid grid-cols-3 gap-4 lg:col-span-8">
+          {
+            [photos.arcticBoat, photos.sledDogs, photos.glacier].map((p, i) => (
+              <figure class="settle tape relative rounded-[0.3rem] border-[1.5px] border-fg bg-page p-1.5" style={`rotate:${[-3, 2, -1][i]}deg; --settle-from:${[8, -6, 5][i]}deg`}>
+                <img src={sized(p.src, 520, 640)} alt={p.alt} width="520" height="640" loading="lazy" decoding="async" class="aspect-4/5 w-full rounded-[0.2rem] object-cover" />
+              </figure>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Awards as stamps */}
+  <section class="container-x py-16">
+    <p class="label text-center text-muted">Recognised by</p>
+    <ul class="reveal-stagger mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
+      {
+        awards.map((a, i) => (
+          <li class="w-36 sm:w-40">
+            <Stamp ring={a.title} center={String(a.year)} sub="winner" rotate={[-10, 6, -4, 9, -7][i]} />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <CtaBand />
+</Layout>

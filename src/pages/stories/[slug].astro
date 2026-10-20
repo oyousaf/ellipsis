@@ -1,0 +1,93 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import PostCard from "../../components/PostCard.astro";
+import Dots from "../../components/Dots.astro";
+import { coverTransitionName, coverUrl, formatDate, readingMinutes } from "../../lib/blog";
+import { site } from "../../data/site";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const more = (await getCollection("blog"))
+  .filter((p) => p.id !== post.id)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  author: { "@type": "Person", name: post.data.author },
+  image: coverUrl(post.data.cover, 1200, 675),
+  publisher: { "@type": "Organization", name: site.name },
+};
+---
+
+<Layout title={post.data.title} description={post.data.description} ogImage={coverUrl(post.data.cover, 1200, 630)} structuredData={structuredData} preloadSerif>
+  <div aria-hidden="true" class="read-progress fixed inset-x-0 top-0 z-60 h-1 origin-left scale-x-0 bg-mark"></div>
+
+  <article>
+    <header class="graph relative pt-36 pb-14 sm:pt-44">
+      <div aria-hidden="true" class="absolute inset-0 bg-linear-to-b from-transparent to-bg"></div>
+      <div class="container-x relative max-w-4xl">
+        <a href="/stories" class="label inline-flex items-center gap-2 hover:text-mark">← All stories</a>
+        <p class="mt-8"><span class="tag text-mark">{post.data.category === "educate" ? "Educate" : "Earth"}</span></p>
+        <h1 class="mt-6 text-[clamp(2.5rem,6vw,4.75rem)]">{post.data.title}</h1>
+        <p class="mt-6 max-w-2xl font-serif text-xl text-muted">{post.data.description}</p>
+        <div class="label mt-8 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span>By {post.data.author}</span>
+          <span aria-hidden="true">·</span>
+          <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+          <span aria-hidden="true">·</span>
+          <span>{readingMinutes(post)} min read</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="relative z-10 container-x max-w-5xl">
+      <div class="rounded-lg border-[1.5px] border-fg bg-page p-2 shadow-[6px_6px_0_var(--color-fg)]" style="rotate:-0.5deg">
+        <img
+          src={coverUrl(post.data.cover, 1600, 900)}
+          alt=""
+          width="1600"
+          height="900"
+          fetchpriority="high"
+          class="aspect-video w-full rounded-[0.3rem] object-cover"
+          style={`view-transition-name: ${coverTransitionName(post)}`}
+        />
+      </div>
+    </div>
+
+    {/* Cream page for reading: full mustard is tiring over a long article. */}
+    <div class="on-page paper -mt-24 border-b-[1.5px] border-fg pt-36">
+      <div class="container-x max-w-176 pb-16">
+        <div class="prose-story">
+          <Content />
+        </div>
+        <Dots class="mt-12" />
+        <p class="label text-center text-muted">Originally published on ellipsis.earth · republished in an unofficial concept redesign</p>
+      </div>
+    </div>
+  </article>
+
+  <section class="py-20">
+    <div class="container-x">
+      <h2 class="label">Keep reading</h2>
+      <div class="mt-10 grid gap-8 md:grid-cols-3">
+        {more.map((p, i) => <PostCard post={p} tilt={[-1, 0.8, -0.4][i]} />)}
+      </div>
+    </div>
+  </section>
+</Layout>

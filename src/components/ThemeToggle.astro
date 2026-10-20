@@ -1,0 +1,51 @@
+---
+// One click always flips what you see. Choosing the same theme as the OS clears the override,
+// so the site goes back to following the system. Applied before paint by the inline script in Layout.astro.
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  class="grid size-10 place-items-center rounded-md transition hover:bg-fg/10"
+  aria-label="Switch to dark theme"
+>
+  <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+    <circle cx="12" cy="12" r="8.5"></circle>
+    <path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"></path>
+  </svg>
+</button>
+
+<script>
+  type Theme = "light" | "dark";
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+  function effective(): Theme {
+    const t = document.documentElement.dataset.theme;
+    if (t === "light" || t === "dark") return t;
+    return systemDark.matches ? "dark" : "light";
+  }
+
+  function updateLabels() {
+    const next = effective() === "dark" ? "light" : "dark";
+    document.querySelectorAll("[data-theme-toggle]").forEach((btn) => btn.setAttribute("aria-label", `Switch to ${next} theme`));
+  }
+
+  function apply(theme: Theme) {
+    const root = document.documentElement;
+    const system: Theme = systemDark.matches ? "dark" : "light";
+    const override = theme !== system;
+    if (override) root.dataset.theme = theme;
+    else delete root.dataset.theme;
+    try {
+      if (override) localStorage.setItem("theme", theme);
+      else localStorage.removeItem("theme");
+    } catch {}
+    updateLabels();
+  }
+
+  document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((btn) => {
+    btn.addEventListener("click", () => apply(effective() === "dark" ? "light" : "dark"));
+  });
+  systemDark.addEventListener("change", updateLabels);
+  updateLabels();
+</script>

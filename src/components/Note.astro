@@ -1,0 +1,18 @@
+---
+// A handwritten margin note, optionally with a marker arrow.
+import Scribble from "./Scribble.astro";
+
+interface Props {
+  class?: string;
+  rotate?: number;
+  arrow?: "down" | "right" | "curl";
+  arrowClass?: string;
+}
+
+const { class: className = "", rotate = -3, arrow, arrowClass = "" } = Astro.props;
+---
+
+<div class:list={["hand pointer-events-none relative text-xl sm:text-2xl", className]} style={`rotate:${rotate}deg`}>
+  <slot />
+  {arrow && <Scribble shape={`arrow-${arrow}`} class:list={["absolute", arrowClass]} />}
+</div>

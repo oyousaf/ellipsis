@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { coverTransitionName, coverUrl, formatDate, readingMinutes } from "../lib/blog";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+  large?: boolean;
+  // Slight tilt so a row of clippings looks pinned by hand.
+  tilt?: number;
+}
+
+const { post, large = false, tilt = 0 } = Astro.props;
+---
+
+<a
+  href={`/stories/${post.id}`}
+  class:list={["card group block p-3", large && "md:grid md:grid-cols-[1.35fr_1fr] md:items-center md:gap-10 md:p-4"]}
+  style={tilt ? `rotate:${tilt}deg` : undefined}
+>
+  <div class="overflow-hidden rounded-[0.3rem] bg-page-2">
+    <img
+      src={coverUrl(post.data.cover, large ? 1200 : 800, large ? 760 : 500)}
+      alt=""
+      width={large ? 1200 : 800}
+      height={large ? 760 : 500}
+      loading="lazy"
+      decoding="async"
+      class="aspect-16/10 w-full object-cover grayscale-35 transition duration-700 ease-out-expo group-hover:scale-[1.03] group-hover:grayscale-0"
+      style={`view-transition-name: ${coverTransitionName(post)}`}
+    />
+  </div>
+  <div class:list={["px-2 pb-3", large && "md:px-0"]}>
+    <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-muted">
+      <span class="tag text-mark">{post.data.category === "educate" ? "Educate" : "Earth"}</span>
+      <time class="label" datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+      <span class="label">· {readingMinutes(post)} min</span>
+    </div>
+    <h3 class:list={["mt-3 leading-[1.05]", large ? "text-4xl sm:text-5xl" : "text-2xl"]}>{post.data.title}</h3>
+    <p class:list={["mt-3 text-muted", !large && "line-clamp-2"]}>{post.data.description}</p>
+    {large && <p class="label mt-6">By {post.data.author}</p>}
+  </div>
+</a>

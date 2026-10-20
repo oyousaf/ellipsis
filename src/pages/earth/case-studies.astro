@@ -1,0 +1,237 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHero from "../../components/PageHero.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import Stamp from "../../components/Stamp.astro";
+import { caseStudies, photos, sized } from "../../data/site";
+
+const [bournemouth, ...others] = caseStudies;
+
+// Scroll story for the flagship case study: the figure stays pinned while these steps scroll past.
+const steps = [
+  {
+    label: "Survey",
+    title: "The most robust litter survey ever run in the UK",
+    body: "Ellipsis teams surveyed Bournemouth, Christchurch and Poole street by street and beach by beach, classifying every item found.",
+  },
+  {
+    label: "Map",
+    title: "Trash ‘treasure maps’",
+    body: "Heatmaps showed exactly where, and when, litter collected, from the town centre to the seafront.",
+  },
+  {
+    label: "Intervene",
+    title: "Playful fixes, placed precisely",
+    body: "Hubbub designed glow-in-the-dark bins and disco bins, placed exactly where the data said they'd work hardest.",
+  },
+  {
+    label: "Measure",
+    title: "Then we surveyed again",
+    body: "Follow-up surveys measured every intervention. Where our data informed decisions, litter fell by an average of 75%, and by up to 90% in some areas.",
+  },
+];
+---
+
+<Layout
+  title="Case studies"
+  description="How Ellipsis Earth data cut litter by 75% in Bournemouth, 69% in Sorrento and 38% in Amiens, and informed national plastics bans."
+>
+  <PageHero marker="Results log" title="Results you can measure." intro="Every project ends the same way: with a follow-up survey that proves what changed.">
+    <nav aria-label="Case studies" class="mt-12 flex flex-wrap gap-2">
+      {
+        caseStudies.map((c) => (
+          <a href={`#${c.id}`} class="tag transition hover:bg-fg hover:text-bg">
+            <span class="text-mark">{c.metric}</span> {c.place}
+          </a>
+        ))
+      }
+    </nav>
+  </PageHero>
+
+  {/* Flagship scroll story */}
+  <section id="bournemouth" class="on-page paper border-y-[1.5px] border-fg">
+    <div class="container-x py-20">
+      <p class="label text-mark">Entry 01 · {bournemouth.country}</p>
+      <h2 class="display-md mt-4 max-w-4xl">{bournemouth.place}</h2>
+      <p class="mt-6 max-w-2xl text-lg text-muted">{bournemouth.summary}</p>
+    </div>
+
+    <div class="container-x grid gap-10 pb-24 lg:grid-cols-12" data-story>
+      <div class="lg:col-span-7">
+        <figure class="story-figure sticky top-24 overflow-hidden rounded-lg border-[1.5px] border-fg bg-page shadow-[6px_6px_0_var(--color-fg)]" data-step="0">
+          <img src={sized(photos.heatmap.src, 1200, 900)} alt={photos.heatmap.alt} width="1200" height="900" loading="lazy" class="story-map aspect-4/3 w-full object-cover" />
+          <div aria-hidden="true" class="story-pins absolute inset-0">
+            {[[28, 30], [46, 42], [63, 55], [52, 74], [74, 80]].map(([x, y]) => <span class="pin" style={`left:${x}%;top:${y}%`} />)}
+          </div>
+          <div class="absolute top-4 left-4 flex gap-1.5">
+            {steps.map((s, i) => <span class="story-dot label rounded px-2 py-1" data-i={i}>{s.label}</span>)}
+          </div>
+          <div class="story-result absolute right-5 bottom-5 w-40">
+            <Stamp ring="Average reduction in litter" center="75%" sub="verified" rotate={-12} />
+          </div>
+        </figure>
+      </div>
+      <ol class="lg:col-span-5">
+        {
+          steps.map((s, i) => (
+            <li class="story-step flex min-h-[70vh] flex-col justify-center py-10" data-step={i}>
+              <p class="label text-mark">
+                Step 0{i + 1} · {s.label}
+              </p>
+              <h3 class="mt-4 text-4xl">{s.title}</h3>
+              <p class="mt-4 text-lg text-muted">{s.body}</p>
+            </li>
+          ))
+        }
+        {bournemouth.secondary && (
+          <li>
+            <dl class="grid gap-px overflow-hidden rounded-lg border-[1.5px] border-fg bg-fg sm:grid-cols-3">
+              {bournemouth.secondary.map((s) => (
+                <div class="bg-page p-4">
+                  <dt class="sr-only">{s.label}</dt>
+                  <dd class="font-display text-3xl font-bold">{s.metric}</dd>
+                  <dd aria-hidden="true" class="mt-1 text-sm text-muted">
+                    {s.label}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p class="mt-6 flex flex-wrap items-center gap-2 text-sm text-muted">
+              With {bournemouth.partners?.map((p) => <span class="tag">{p}</span>)}
+            </p>
+          </li>
+        )}
+      </ol>
+    </div>
+  </section>
+
+  {/* Remaining entries */}
+  <div class="container-x">
+    {
+      others.map((c, i) => (
+        <article id={c.id} class="reveal grid gap-8 border-b border-line py-20 lg:grid-cols-12">
+          <div class="lg:col-span-4">
+            <p class="label text-mark">
+              Entry {String(i + 2).padStart(2, "0")} · {c.country}
+            </p>
+            <h2 class="mt-4 text-5xl">{c.place}</h2>
+          </div>
+          <p class="font-display text-[clamp(5rem,11vw,8.5rem)] leading-[0.85] font-bold tracking-tighter lg:col-span-3">{c.metric}</p>
+          <div class="lg:col-span-5">
+            <p class="label text-muted">{c.metricLabel}</p>
+            <p class="mt-4 font-display text-2xl leading-snug font-semibold">{c.headline}</p>
+            <p class="mt-4 text-lg text-muted">{c.summary}</p>
+            {c.secondary && <p class="mt-4 text-muted">Also: <strong class="text-fg">{c.secondary[0].metric}</strong> {c.secondary[0].label}.</p>}
+            {c.partners && (
+              <p class="mt-6 flex flex-wrap items-center gap-2 text-sm text-muted">
+                With {c.partners.map((p) => <span class="tag">{p}</span>)}
+              </p>
+            )}
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  <CtaBand title="Want results like these?" body="Councils, municipalities and brands: tell us about your area and we'll scope a survey." note="let's map it" />
+</Layout>
+
+<style>
+  .pin {
+    position: absolute;
+    width: 1.1rem;
+    height: 1.1rem;
+    translate: -50% -50%;
+    border-radius: 999px;
+    background: var(--color-marker);
+    box-shadow: 0 0 0 4px rgb(246 235 200 / 0.85);
+    scale: 0;
+    transition: scale 500ms var(--ease-out-expo);
+  }
+
+  .pin:nth-child(2) {
+    transition-delay: 80ms;
+  }
+
+  .pin:nth-child(3) {
+    transition-delay: 160ms;
+  }
+
+  .pin:nth-child(4) {
+    transition-delay: 240ms;
+  }
+
+  .pin:nth-child(5) {
+    transition-delay: 320ms;
+  }
+
+  .story-map {
+    filter: grayscale(1) contrast(1.1);
+    transition: filter 700ms;
+  }
+
+  .story-dot {
+    background: rgb(246 235 200 / 0.9);
+    color: var(--color-forest);
+    transition: background-color 300ms, color 300ms;
+  }
+
+  .story-result {
+    opacity: 0;
+    scale: 1.6;
+    transition: opacity 400ms, scale 500ms var(--ease-out-expo);
+  }
+
+  /* Each step progressively reveals more of the figure. */
+  .story-figure:not([data-step="0"]) .story-map {
+    filter: none;
+  }
+
+  .story-figure[data-step="2"] .pin,
+  .story-figure[data-step="3"] .pin {
+    scale: 1;
+  }
+
+  .story-figure[data-step="3"] .story-result {
+    opacity: 1;
+    scale: 1;
+  }
+
+  .story-figure[data-step="0"] .story-dot[data-i="0"],
+  .story-figure[data-step="1"] .story-dot[data-i="1"],
+  .story-figure[data-step="2"] .story-dot[data-i="2"],
+  .story-figure[data-step="3"] .story-dot[data-i="3"] {
+    background: var(--color-forest);
+    color: var(--color-mustard);
+  }
+
+  .story-step {
+    opacity: 0.35;
+    transition: opacity 400ms;
+  }
+
+  .story-step.is-active {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  // Tracks which story step is centred and mirrors it onto the pinned figure.
+  const figure = document.querySelector<HTMLElement>(".story-figure");
+  const steps = document.querySelectorAll<HTMLElement>(".story-step");
+
+  if (figure && steps.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target as HTMLElement;
+          steps.forEach((s) => s.classList.toggle("is-active", s === el));
+          figure.dataset.step = el.dataset.step ?? "0";
+        });
+      },
+      { rootMargin: "-45% 0px -45% 0px" }
+    );
+    steps.forEach((s) => observer.observe(s));
+  }
+</script>

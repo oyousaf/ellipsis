@@ -1,0 +1,48 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import PageHero from "../../components/PageHero.astro";
+import PostCard from "../../components/PostCard.astro";
+import { expeditions, photos, sized } from "../../data/site";
+
+const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const [lead, ...rest] = posts;
+const tilts = [-1, 0.8, -0.5, 1.2, -1.1, 0.4];
+---
+
+<Layout title="Stories" description="Journalism, campaigns and expeditions from the Ellipsis Earth team: litter, behaviour change, climate communication and sustainable living.">
+  <PageHero
+    marker="§ 03 · Stories · Communicate"
+    title="Numbers don't change minds. Stories do."
+    intro="Science, behaviour and the people behind the data, from the Ellipsis team and friends."
+  />
+
+  <section class="container-x pb-20">
+    {lead && <div class="reveal"><PostCard post={lead} large /></div>}
+    <div class="reveal-stagger mt-16 grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+      {rest.map((post, i) => <PostCard post={post} tilt={tilts[i % tilts.length]} />)}
+    </div>
+  </section>
+
+  <section class="on-page paper border-y-[1.5px] border-fg py-24">
+    <div class="container-x grid items-center gap-12 lg:grid-cols-12">
+      <div class="reveal lg:col-span-4">
+        <p class="label text-mark">Expeditions</p>
+        <h2 class="display-md mt-4">{expeditions.title}</h2>
+        <p class="mt-5 text-lg text-muted">{expeditions.body}</p>
+        <ul class="mt-6 flex flex-wrap gap-1.5">
+          {expeditions.places.map((p) => <li class="tag">{p}</li>)}
+        </ul>
+      </div>
+      <div class="grid grid-cols-2 gap-5 lg:col-span-8">
+        {
+          [photos.arcticBoat, photos.sledDogs, photos.glacier, photos.river].map((p, i) => (
+            <figure class="settle tape relative rounded-[0.3rem] border-[1.5px] border-fg bg-page p-2" style={`rotate:${[-2, 1.5, 1, -1.5][i]}deg; --settle-from:${[6, -5, -4, 5][i]}deg`}>
+              <img src={sized(p.src, 700, 520)} alt={p.alt} width="700" height="520" loading="lazy" decoding="async" class="aspect-4/3 w-full rounded-[0.2rem] object-cover" />
+            </figure>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>

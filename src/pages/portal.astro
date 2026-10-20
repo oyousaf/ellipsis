@@ -1,0 +1,65 @@
+---
+import Layout from "../layouts/Layout.astro";
+import BrandMark from "../components/BrandMark.astro";
+import Note from "../components/Note.astro";
+---
+
+{/* Placeholder only: this concept never connects to, or links to, the real Ellipsis portal. Nothing is submitted. */}
+<Layout title="Client login" description="Placeholder client login for the Ellipsis Earth concept redesign.">
+  <section class="graph relative grid min-h-svh place-items-center px-4 pt-28 pb-16">
+    <div aria-hidden="true" class="absolute inset-0 bg-linear-to-b from-transparent to-bg"></div>
+    <div class="relative w-full max-w-md">
+      <Note class="absolute -top-10 -right-2 sm:-right-16" rotate={6}>concept preview</Note>
+      <div class="card p-8 sm:p-10" style="rotate:-0.8deg">
+        <BrandMark class="text-3xl" />
+        <h1 class="mt-8 text-4xl">Client login</h1>
+        <p class="mt-3 text-muted">Survey dashboards, heatmaps and reports.</p>
+
+        <form data-demo-login class="mt-8 space-y-5" novalidate>
+          <label class="block">
+            <span class="label">Email</span>
+            <input type="email" name="email" autocomplete="off" placeholder="you@council.gov.uk" class="login-input mt-2" />
+          </label>
+          <label class="block">
+            <span class="label">Password</span>
+            <input type="password" name="password" autocomplete="off" placeholder="••••••••" class="login-input mt-2" />
+          </label>
+          <button type="submit" class="btn btn-ink w-full justify-center">Sign in <span class="arrow" aria-hidden="true">→</span></button>
+          <p data-demo-status role="status" class="min-h-[1.5rem] text-sm text-mark"></p>
+        </form>
+
+        <p class="label mt-6 border-t border-line pt-5 leading-relaxed text-muted">
+          Demo only. This concept site doesn't connect to the real Ellipsis portal, and nothing you type here is sent anywhere.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .login-input {
+    display: block;
+    width: 100%;
+    border-radius: 0.4rem;
+    border: 1.5px solid var(--color-fg);
+    background: var(--color-bg);
+    padding: 0.8rem 0.9rem;
+    font-size: 1rem;
+  }
+
+  .login-input:focus {
+    outline: 2px dashed var(--color-mark);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  // Intercepts the demo form so credentials never leave the page.
+  const form = document.querySelector<HTMLFormElement>("[data-demo-login]");
+  const status = form?.querySelector<HTMLElement>("[data-demo-status]");
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    form.reset();
+    if (status) status.textContent = "This is a placeholder: the client portal isn't part of the concept.";
+  });
+</script>

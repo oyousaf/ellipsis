@@ -1,0 +1,61 @@
+---
+import BrandMark from "./BrandMark.astro";
+import { nav, site } from "../data/site";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="flip paper overflow-hidden bg-bg text-fg">
+  <div class="container-x grid gap-12 pt-20 pb-12 md:grid-cols-12">
+    <div class="md:col-span-5">
+      <p class="font-display text-4xl leading-[1.05] font-bold tracking-tight sm:text-5xl">
+        Data that turns litter into <span class="hand text-[1.1em]">decisions</span>.
+      </p>
+      <a href={`mailto:${site.email}`} class="mt-8 inline-block font-mono text-sm underline decoration-1 underline-offset-4 hover:text-mark">
+        {site.email}
+      </a>
+      <p class="mt-1 font-mono text-sm text-muted">{site.location}</p>
+    </div>
+
+    <nav aria-label="Footer" class="grid grid-cols-2 gap-8 md:col-span-7 md:grid-cols-3">
+      <div>
+        <p class="label mb-4 text-muted">Index</p>
+        <ul class="space-y-2">
+          {nav.map((item) => <li><a href={item.href} class="hover:text-mark">{item.label}</a></li>)}
+          <li><a href="/contact" class="hover:text-mark">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="label mb-4 text-muted">Elsewhere</p>
+        <ul class="space-y-2">
+          {
+            site.socials.map((s) => (
+              <li>
+                <a href={s.href} class="hover:text-mark" rel="noopener noreferrer" target="_blank">
+                  {s.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div>
+        <p class="label mb-4 text-muted">Platform</p>
+        <ul class="space-y-2">
+          <li><a href={site.portalUrl} class="hover:text-mark">Client login</a></li>
+          <li><a href="/earth#surveys" class="hover:text-mark">Surveys</a></li>
+          <li><a href="/educate#educators" class="hover:text-mark">For educators</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+
+  <div aria-hidden="true" class="container-x select-none">
+    <BrandMark live class="text-[24vw] leading-[0.78] md:text-[21vw]" />
+  </div>
+
+  <div class="container-x flex flex-col gap-3 border-t border-line py-6 text-xs text-muted md:flex-row md:items-center md:justify-between">
+    <p>Unofficial concept redesign for a personal portfolio. Not affiliated with or endorsed by {site.name} Ltd. Content and photography © {site.name} Ltd.</p>
+    <p class="label">End of entry · {year}</p>
+  </div>
+</footer>

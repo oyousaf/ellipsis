@@ -1,0 +1,38 @@
+---
+import Scribble from "./Scribble.astro";
+
+interface Props {
+  title?: string;
+  body?: string;
+  cta?: string;
+  href?: string;
+  note?: string;
+}
+
+const {
+  title = "Start with a baseline survey.",
+  body = "Ten days of data tells you exactly where litter collects, where it comes from and what to try first.",
+  cta = "Talk to the team",
+  href = "/contact",
+  note = "no guesswork",
+} = Astro.props;
+---
+
+<section class="container-x py-20 sm:py-28">
+  <div class="reveal flip paper relative overflow-hidden rounded-xl border-[1.5px] border-fg bg-bg px-6 py-14 text-fg sm:px-14 sm:py-20">
+    <div aria-hidden="true" class="graph absolute inset-0 opacity-50"></div>
+    <div class="relative grid items-end gap-10 md:grid-cols-[1.4fr_1fr]">
+      <div>
+        <h2 class="display-md">{title}</h2>
+        <p class="mt-5 max-w-xl text-lg text-muted">{body}</p>
+        <a href={href} class="btn btn-ink mt-9">
+          {cta} <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+      <div class="relative hidden h-40 md:block">
+        <p class="hand absolute top-0 right-6 text-3xl" style="rotate:-6deg">{note}</p>
+        <Scribble shape="arrow-curl" class="absolute top-12 right-28 h-28 w-32 -scale-x-100" />
+      </div>
+    </div>
+  </div>
+</section>

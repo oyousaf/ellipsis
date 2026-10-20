@@ -1,0 +1,123 @@
+---
+import BrandMark from "./BrandMark.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import { nav, site } from "../data/site";
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+{/* Transparent over the hero, then turns solid with an inked rule as the page scrolls. */}
+<header class="header-bar fixed inset-x-0 top-0 z-50">
+  <div class="container-x flex items-center justify-between gap-6 py-4">
+    <a href="/" class="text-[1.65rem]" aria-label={`${site.name} home`}>
+      <BrandMark />
+    </a>
+
+    <nav aria-label="Main" class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {
+          nav.map((item, i) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isActive(item.href) ? "page" : undefined}
+                class="group relative flex items-baseline gap-1.5 rounded-md px-3.5 py-2 font-semibold transition hover:bg-fg/[0.07] aria-[current=page]:bg-fg aria-[current=page]:text-bg"
+              >
+                <span class="label opacity-60">0{i + 1}</span>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <ThemeToggle />
+      <a href={site.portalUrl} class="label hidden rounded-md px-3 py-2.5 transition hover:bg-fg/[0.07] md:inline-block">Client login</a>
+      <a href="/contact" class="btn btn-ink hidden py-2.5! sm:inline-flex">Get in touch</a>
+      <button
+        type="button"
+        popovertarget="mobile-menu"
+        class="grid size-10 place-items-center rounded-md transition hover:bg-fg/10 lg:hidden"
+        aria-label="Open menu"
+      >
+        <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 8c5-1.5 11 1 16-.5M4 16c4 1 8-1 12 0"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  {/* Popover API: open/close, Esc and light-dismiss all come free from the browser. */}
+  <div id="mobile-menu" popover class="mobile-menu flip paper m-0 h-dvh max-h-none w-full max-w-none bg-bg p-0 text-fg">
+    <div class="container-x flex h-full flex-col py-4">
+      <div class="flex items-center justify-between">
+        <span class="text-[1.65rem]"><BrandMark live /></span>
+        <button
+          type="button"
+          popovertarget="mobile-menu"
+          popovertargetaction="hide"
+          class="grid size-10 place-items-center rounded-md hover:bg-fg/10"
+          aria-label="Close menu"
+        >
+          <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18"></path>
+          </svg>
+        </button>
+      </div>
+      <nav aria-label="Mobile" class="mt-10 flex-1">
+        <ul class="divide-y divide-line border-y border-line">
+          {
+            nav.map((item, i) => (
+              <li class="menu-item" style={`--i:${i}`}>
+                <a href={item.href} class="flex items-baseline justify-between py-5">
+                  <span class="font-display text-5xl font-bold tracking-tight">{item.label}</span>
+                  <span class="hand text-lg">{item.note}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <div class="flex flex-col gap-3 pb-4">
+        <a href="/contact" class="btn btn-ink justify-center">Get in touch</a>
+        <a href={site.portalUrl} class="btn btn-line justify-center">Client login</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .mobile-menu {
+    inset: 0;
+    clip-path: inset(0 0 100% 0);
+    transition:
+      clip-path 500ms var(--ease-out-expo),
+      display 500ms allow-discrete,
+      overlay 500ms allow-discrete;
+  }
+
+  .mobile-menu:popover-open {
+    clip-path: inset(0 0 0 0);
+  }
+
+  @starting-style {
+    .mobile-menu:popover-open {
+      clip-path: inset(0 0 100% 0);
+    }
+  }
+
+  .mobile-menu:popover-open .menu-item {
+    animation: menu-in 600ms var(--ease-out-expo) both;
+    animation-delay: calc(var(--i) * 60ms + 150ms);
+  }
+
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }
+</style>

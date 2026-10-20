@@ -1,0 +1,93 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { site } from "../data/site";
+// Preloaded so headlines don't re-wrap (and shift the layout) when the web fonts swap in.
+import displayFontUrl from "@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wdth-normal.woff2?url";
+import serifFontUrl from "@fontsource-variable/newsreader/files/newsreader-latin-opsz-normal.woff2?url";
+import monoFontUrl from "@fontsource-variable/martian-mono/files/martian-mono-latin-wght-normal.woff2?url";
+
+interface Props {
+  title: string;
+  // Overrides the default "<title> | Ellipsis Earth" pattern (e.g. brand-first on the homepage).
+  fullTitle?: string;
+  description?: string;
+  ogImage?: string;
+  // Long-form pages set body text in the serif, so it is worth preloading there.
+  preloadSerif?: boolean;
+  // Extra JSON-LD for the page, e.g. a BlogPosting.
+  structuredData?: Record<string, unknown>;
+}
+
+const { title, fullTitle: fullTitleOverride, description = site.description, ogImage = "/og.png", preloadSerif = false, structuredData } = Astro.props;
+
+const fullTitle = fullTitleOverride ?? `${title} | ${site.name}`;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const ogImageUrl = new URL(ogImage, Astro.site);
+
+const organizationData = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: site.name,
+  url: "https://www.ellipsis.earth",
+  email: site.email,
+  foundingDate: String(site.founded),
+  sameAs: site.socials.map((s) => s.href),
+};
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {/* Unofficial concept: never index, so it can't compete with the real site. */}
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#e2b714" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#10241a" media="(prefers-color-scheme: dark)" />
+    <link rel="preconnect" href="https://static.wixstatic.com" />
+    <link rel="preload" href={displayFontUrl} as="font" type="font/woff2" crossorigin />
+    {preloadSerif && <link rel="preload" href={serifFontUrl} as="font" type="font/woff2" crossorigin />}
+    <link rel="preload" href={monoFontUrl} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(organizationData)} />
+    {structuredData && <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
+
+    {/* Runs before paint so a saved theme never flashes. */}
+    <script is:inline>
+      try {
+        const t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+  </head>
+  <body class="paper min-h-dvh overflow-x-clip">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-100 focus:rounded-md focus:bg-fg focus:px-4 focus:py-2 focus:text-bg"
+      >Skip to content</a
+    >
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      import "../scripts/counters";
+    </script>
+  </body>
+</html>
